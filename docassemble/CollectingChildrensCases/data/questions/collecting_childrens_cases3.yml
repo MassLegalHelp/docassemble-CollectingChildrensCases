@@ -1,0 +1,68 @@
+comment: |
+  Using Jonathan's example of nested for loops in Groups Example blocks below.
+  We want one fewer levels of depth, and I don't think we need a generic object - maybe we do
+  Each case in our list of cases has attributes - I think - which Jonathan's example does not have.
+---
+objects:
+  - children: ChildList.using(object_type=Individual, complete_attribute='complete') 
+  - children[i].cases: DAList.using(object_type=Thing, complete_attribute='complete') 
+---
+mandatory: True
+code: |
+  children.ask_number = True
+  children[i].name.first
+  children[i].cases.there_are_any
+  children[i].cases[j].parent_role
+  children[i].cases[j].complete = True
+  children.complete = True
+---
+mandatory: True
+question: |
+  List of children
+subquestion: |
+  and their cases
+  % for child in children:
+    if children[i].cases.there_are_any:
+     * Care and Custody proceedings for ${ child }:
+      for case in children[i].cases:
+        * ${child}'s  ${ordinal(j)} case
+          * was in ${case.court} court
+          * with docket number: ${case.docket},
+          * status is ${case.status}, and
+          * parent's role was ${case.parent_role}.
+      endfor
+     else
+       ${child} is not nor ever has been involved in any Care or Custody proceeding.
+     end if
+  % endfor
+buttons:
+  - Restart: restart
+---
+question: |
+  How many children?
+fields:
+  Number of kids: children.target_number
+---
+question: |
+  What is the name of the ${ordinal(i)} child?
+fields:
+  - First: children[i].name.first
+  - Last: children[i].name.last
+---
+question: |
+  Does ${children[i]} have any cases?
+yesno: children[i].cases.there_are_any
+---
+question: |
+  Tell me about ${children[i]}'s ${ordinal(j)} case
+fields:
+  - Court: children[i].cases[j].court
+  - Docket: children[i].cases[j].docket
+  - Status: children[i].cases[j].status
+  - Parents role: children[i].cases[j].parent_role
+---
+question: |
+  Does ${children[i]} have any cases other than ${children[i].cases.court_docket}?
+yesno: children[i].cases.there_is_another
+---
+
