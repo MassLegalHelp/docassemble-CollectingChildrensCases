@@ -45,7 +45,7 @@ def find_package_data(where='.', package='', exclude=standard_exclude, exclude_d
 setup(name='docassemble.CollectingChildrensCases',
       version='',
       description=(''),
-      long_description='# docassemble.CollectingChildrensCases\n\n\n\n## Author\n\nCaroline Robinson, crobinson@mlri.org\n\n',
+      long_description='# docassemble.CollectingChildrensCases\r\n\r\n\r\n\r\n## Author\r\n\r\nCaroline Robinson, crobinson@mlri.org\r\n\r\n',
       long_description_content_type='text/markdown',
       author='Caroline Robinson',
       author_email='crobinson@mlri.org',

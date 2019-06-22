@@ -4,36 +4,43 @@ comment: |
   Each case in our list of cases has attributes - I think - which Jonathan's example does not have.
 ---
 objects:
-  - children: ChildList.using(object_type=Individual, complete_attribute='complete') 
-  - children[i].cases: DAList.using(object_type=Thing, complete_attribute='complete') 
+  - children: ChildList.using(complete_attribute='complete') 
+  - children[i].cases: DAList.using(object_type=DAObject, complete_attribute='complete') 
 ---
 mandatory: True
 code: |
   children.ask_number = True
+---
+code: |
   children[i].name.first
-  children[i].cases.there_are_any
-  children[i].cases[j].parent_role
-  children[i].cases[j].complete = True
-  children.complete = True
+  children[i].cases.gather()
+  children[i].complete = True
+---
+code: |
+ children[i].cases[j].parent_role
+ children[i].cases[j].complete = True
 ---
 mandatory: True
 question: |
   List of children
 subquestion: |
   and their cases
+  
   % for child in children:
-    if children[i].cases.there_are_any:
+    % if children[i].cases.there_are_any:
      * Care and Custody proceedings for ${ child }:
-      for case in children[i].cases:
-        * ${child}'s  ${ordinal(j)} case
-          * was in ${case.court} court
-          * with docket number: ${case.docket},
-          * status is ${case.status}, and
-          * parent's role was ${case.parent_role}.
-      endfor
-     else
+     
+      % for case in children[i].cases:
+          * ${child}'s  ${ordinal(loop.index)} case was:
+            *  in ${case.court} court
+            * with docket number: ${case.docket},
+            * status is ${case.status}, and
+            * parent's role was ${case.parent_role}.
+            
+      % endfor
+     % else:
        ${child} is not nor ever has been involved in any Care or Custody proceeding.
-     end if
+     % endif
   % endfor
 buttons:
   - Restart: restart
@@ -62,7 +69,15 @@ fields:
   - Parents role: children[i].cases[j].parent_role
 ---
 question: |
-  Does ${children[i]} have any cases other than ${children[i].cases.court_docket}?
+  Does ${children[i]} have any cases other than
+  % for case in children[i].cases:
+    % if loop.last:
+     ${case.docket}
+    % else:
+      ${case.docket}, 
+    % endif
+  % endfor
+  ?
 yesno: children[i].cases.there_is_another
 ---
 
